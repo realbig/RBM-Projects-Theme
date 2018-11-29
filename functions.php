@@ -112,6 +112,10 @@ add_action( 'wp_enqueue_scripts', function () {
 	
 } );
 
+add_action( 'admin_init', function() {
+	var_dump( check_upload_mimes( array( 'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ) ) );
+});
+
 /**
  * Setup theme properties and stuff
  * 
@@ -126,4 +130,23 @@ add_action( 'after_setup_theme', function () {
     // Allow shortcodes in text widget
     add_filter( 'widget_text', 'do_shortcode' );
 
+} );
+
+/**
+ * Allow CSV and Excel Files to be uploaded by Admins
+ * @param array Mime Types
+ * @return array Modified Mime Types
+ */
+add_filter( 'upload_mimes', function( $mime_types ) {
+	
+	//if ( ! current_user_can( 'manage_options' ) ) return $mime_types;
+	
+	$mime_types = array_merge( $mime_types, array(
+		'xls' => 'application/vnd.ms-excel',
+		'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+		'csv' => 'text/csv',
+	) );
+	
+	return $mime_types;
+	
 } );
