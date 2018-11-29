@@ -127,3 +127,30 @@ add_action( 'after_setup_theme', function () {
     add_filter( 'widget_text', 'do_shortcode' );
 
 } );
+
+add_filter( 'psp_replace_recipient_email', function( $recipient_email, $post_id, $user_ids, $email_header, $notification_type ) {
+	
+	$recipient_email = explode( ',', $recipient_email );
+	
+	$recipient_email = array_map( function( $email ) {
+		return ( strpos( $email, '@realbigmarketing.com' ) !== false ) ? 'support@realbigmarketing.com' : $email;
+	}, $recipient_email );
+	
+	$recipient_email = array_values( array_unique( $recipient_email ) );
+	
+	return implode( ',', $recipient_email );
+	
+}, 10, 5 );
+
+add_filter( 'psp_notification_from_email', function( $from_data, $notification_type ) {
+	
+	if ( strpos( $from_data['from_email'], '@realbigmarketing.com' ) === false ) return $from_data;
+	
+	$from_data = array(
+		'from_email' => 'support@realbigmarketing.com',
+		'from_name' => get_bloginfo( 'name' ),
+	);
+	
+	return $from_data;
+	
+}, 10, 2 );
